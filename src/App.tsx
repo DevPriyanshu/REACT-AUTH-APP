@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import RoutingConfig from "./routes-config/RoutingConfiguration";
+import { CssBaseline, StyledEngineProvider } from "@mui/material";
+import { Suspense } from "react";
+import { SnackbarProvider } from "./context/snackbar-context";
+
+import ThemePrimaryColor from "./component/ThemePrimaryColor";
+import ThemeConfig from "./theme";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SnackbarProvider>
+      <CssBaseline />
+      <ThemeConfig>
+        <ThemePrimaryColor>
+          <StyledEngineProvider injectFirst>
+            <Suspense>
+              <RoutingConfig />
+            </Suspense>
+          </StyledEngineProvider>
+        </ThemePrimaryColor>
+      </ThemeConfig>
+    </SnackbarProvider>
   );
 }
 
