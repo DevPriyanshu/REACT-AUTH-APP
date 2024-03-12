@@ -23,8 +23,13 @@ const data = [
 ];
 
 export default function MenuActionList() {
-  const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
+  function handleLogOut() {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
+  const [open, setOpen] = React.useState(true);
+
   return (
     <Box>
       <Paper elevation={0} sx={{ maxWidth: 200 }}>
@@ -141,11 +146,7 @@ export default function MenuActionList() {
               </ListItemButton>
             ))}
           <Stack p={2}>
-            <Button
-              onClick={() => navigate("/login")}
-              color="primary"
-              variant="contained"
-            >
+            <Button onClick={handleLogOut} color="primary" variant="contained">
               LogOut
             </Button>
           </Stack>

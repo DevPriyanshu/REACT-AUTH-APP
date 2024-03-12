@@ -3,13 +3,13 @@ import { LoadingButton } from "@mui/lab";
 import { Box, InputAdornment, Stack } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { JwtAuthenticationControllerApi, JwtRequest } from "../api";
 import { FormProvider, RHFTextField } from "./hook-form";
-import { ApiConfiguration } from "../api/api-config";
 import * as yup from "yup";
 import { useSnackbar } from "../context/snackbar-context";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { JwtRequest } from "../models/model";
+import axiosInstance from "../api/axios-config";
 export default function Login() {
   const { showSnackbar } = useSnackbar();
   const { setAuthData } = useAuthContext();
@@ -31,18 +31,26 @@ export default function Login() {
     formState: { errors, isSubmitting, isValid },
   } = methods;
 
+  const hitLoginApi = async (data: JwtRequest) => {
+    try {
+      const response = await axiosInstance.post(
+        "authenticate",
+        {
+          username: data.username,
+          password: data.password,
+        }
+      );
+      setAuthData(response.data);
+      localStorage.setItem("token", response.data.token);
+      navigate("/home");
+      showSnackbar("Login Success", "success");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  
   const onSubmit = async (data: JwtRequest) => {
-    new JwtAuthenticationControllerApi(ApiConfiguration)
-      .createAuthenticationTokenUsingPOST(data)
-      .then((res) => {
-        console.log(res.data);
-        setAuthData(res.data);
-        navigate("/home");
-        showSnackbar(`Loggged In Succesfully.`, "success");
-      })
-      .catch((error) => {
-        showSnackbar(error.message, "error");
-      });
+    hitLoginApi(data);
   };
 
   return (

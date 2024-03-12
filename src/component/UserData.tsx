@@ -1,48 +1,80 @@
-import { Divider, Paper, Typography } from "@mui/material";
-import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
-import { User, UserControllerApi } from "../api";
-import apiConfig, { ApiConfiguration, setApiToken } from "../api/api-config";
 import { useSnackbar } from "../context/snackbar-context";
-import { useAuthContext } from "../context/AuthContext";
+
+import createAxiosInstance from "../api/axios-config";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import { User } from "../models/model";
+import ListItemButton from "@mui/material/ListItemButton";
+import { Edit } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import UpdateUserModal from "./UpdateUser";
 
 export default function Userdata() {
   const { showSnackbar } = useSnackbar();
   const [user, setUser] = useState<User[]>([]);
-  const { auth } = useAuthContext();
-  console.log({ auth });
-  useEffect(() => {
-    async function fetchAllUsers() {
-      console.log(auth.data.token);
-      setApiToken(auth.data.token)
-      new UserControllerApi(ApiConfiguration)
-        .getAllUsersUsingGET()
-        .then((res) => {
-          console.log(res.data);
-          setUser(res.data);
-          showSnackbar(`Data Loaded Succesfully.`, "success");
-        })
-        .catch((error) => {
-          console.log({ error });
-          showSnackbar(
-            "Something went wrong while fetching the data.",
-            "error"
-          );
-        });
+  const [userToUpdate, setUserToUpdate] = useState<User>();
+  async function fetchAllUsers() {
+    try {
+      const response = await createAxiosInstance.get("users");
+      setUser(response.data);
+    } catch (error) {
+      showSnackbar("The request is failing ", "error");
     }
+  }
+  useEffect(() => {
     fetchAllUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  
   return (
-    <Box p={3}>
-      <Paper elevation={0} sx={{ maxWidth: 200 }}>
-        <Divider />
-        <Typography>User Data To Show</Typography>
-        {user.map((m) => (
-          <Typography key={m.id}>{m.firstName}</Typography>
-        ))}
-      </Paper>
-    </Box>
+    <List
+      dense
+      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+    >
+      {userToUpdate !== undefined ? (
+        <UpdateUserModal user={userToUpdate} />
+      ) : (
+        <>
+          {user.map((u) => {
+            const labelId = `checkbox-list-secondary-label-${u}`;
+            return (
+              <ListItem
+                sx={{ margin: 2 }}
+                key={u.id}
+                secondaryAction={
+                  <>
+                    <IconButton
+                      edge="end"
+                      onClick={() => {
+                        setUserToUpdate(u);
+                      }}
+                    >
+                      <Edit />
+                    </IconButton>
+                  </>
+                }
+                disablePadding
+              >
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <Avatar sx={{ color: "red" }}>
+                      {u.firstName?.charAt(0)}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    id={labelId}
+                    primary={`${u?.firstName}`}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </>
+      )}
+    </List>
   );
 }

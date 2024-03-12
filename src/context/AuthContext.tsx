@@ -9,12 +9,9 @@ export const authContext = createContext<{
 });
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [auth, setAuth] = useState({ loading: true, data: null });
-  const setAuthData = (data: any) => {
-    setAuth((prevAuth) => ({
-      ...prevAuth,
-      data: data,
-    }));
+  const [auth, setAuth] = useState<string>("");
+  const setAuthData = (data: string) => {
+    setAuth(data);
   };
 
   const restaurantContextValue = {
