@@ -1,80 +1,66 @@
-import { useEffect, useState } from "react";
-import { useSnackbar } from "../context/snackbar-context";
-
-import createAxiosInstance from "../api/axios-config";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
+import * as React from "react";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useUserStore } from "../store/user-store";
 import { User } from "../models/model";
-import ListItemButton from "@mui/material/ListItemButton";
-import { Edit } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import UpdateUserModal from "./UpdateUser";
+import { IconButton } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+
+const columns: GridColDef[] = [
+  { field: "id", headerName: "ID", width: 70 },
+  { field: "firstName", headerName: "First name", width: 130 },
+  { field: "lastName", headerName: "Last name", width: 130 },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 90,
+  },
+  {
+    field: "updatedAt",
+    headerName: "Modified",
+    width: 90,
+    valueFormatter: (params) => format(new Date(params.value), "MM/YYY"),
+  },
+  {
+    field: "action",
+    headerName: "Action",
+    width: 90,
+    renderCell: (params) => (
+      <div>
+        <IconButton onClick={() => console.log("Update")}>
+          <Edit />
+        </IconButton>
+        <IconButton onClick={() => console.log("Delete")}>
+          <Delete />
+        </IconButton>
+      </div>
+    ),
+  },
+];
 
 export default function Userdata() {
-  const { showSnackbar } = useSnackbar();
-  const [user, setUser] = useState<User[]>([]);
+  const { users, initUsers } = useUserStore();
   const [userToUpdate, setUserToUpdate] = useState<User>();
-  async function fetchAllUsers() {
-    try {
-      const response = await createAxiosInstance.get("users");
-      setUser(response.data);
-    } catch (error) {
-      showSnackbar("The request is failing ", "error");
-    }
-  }
+
   useEffect(() => {
-    fetchAllUsers();
+    initUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
   return (
-    <List
-      dense
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-    >
-      {userToUpdate !== undefined ? (
-        <UpdateUserModal user={userToUpdate} />
-      ) : (
-        <>
-          {user.map((u) => {
-            const labelId = `checkbox-list-secondary-label-${u}`;
-            return (
-              <ListItem
-                sx={{ margin: 2 }}
-                key={u.id}
-                secondaryAction={
-                  <>
-                    <IconButton
-                      edge="end"
-                      onClick={() => {
-                        setUserToUpdate(u);
-                      }}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </>
-                }
-                disablePadding
-              >
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar sx={{ color: "red" }}>
-                      {u.firstName?.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    id={labelId}
-                    primary={`${u?.firstName}`}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </>
-      )}
-    </List>
+    <div style={{ height: 400, width: "100%", margin:1 }}>
+      {userToUpdate !== undefined && <UpdateUserModal user={userToUpdate} />}
+      <DataGrid
+        rows={users}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 5 },
+          },
+        }}
+        pageSizeOptions={[5, 10]}
+      />
+    </div>
   );
 }

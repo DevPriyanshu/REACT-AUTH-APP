@@ -16,6 +16,8 @@ import { GetApp, Search } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import Userdata from "./UserData";
+import Typography from "@mui/material/Typography";
 
 const data = [
   { icon: <GetApp />, label: "Get All User(s)" },
@@ -31,11 +33,18 @@ export default function MenuActionList() {
   const [open, setOpen] = React.useState(true);
 
   return (
-    <Box>
-      <Paper elevation={0} sx={{ maxWidth: 200 }}>
+    <Box
+      sx={{
+        border: "1px solid black",
+        display: "flex",
+        justifyContent: "space-between",
+        maxWidth: "100%",
+      }}
+    >
+      <Paper elevation={2} sx={{ maxWidth: 200, padding: 1 }}>
         <Divider />
         <ListItem component="div" disablePadding>
-          <ListItemButton sx={{ height: 56 }}>
+          <ListItemButton>
             <ListItemIcon>
               <Home color="primary" />
             </ListItemIcon>
@@ -48,40 +57,6 @@ export default function MenuActionList() {
               }}
             />
           </ListItemButton>
-          <Tooltip title="Project Settings">
-            <IconButton
-              size="large"
-              sx={{
-                "& svg": {
-                  color: "rgba(255,255,255,0.8)",
-                  transition: "0.2s",
-                  transform: "translateX(0) rotate(0)",
-                },
-                "&:hover, &:focus": {
-                  bgcolor: "unset",
-                  "& svg:first-of-type": {
-                    transform: "translateX(-4px) rotate(-20deg)",
-                  },
-                  "& svg:last-of-type": {
-                    right: 0,
-                    opacity: 1,
-                  },
-                },
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  height: "80%",
-                  display: "block",
-                  left: 0,
-                  width: "1px",
-                  bgcolor: "divider",
-                },
-              }}
-            >
-              <Settings />
-              <ArrowRight sx={{ position: "absolute", right: 4, opacity: 0 }} />
-            </IconButton>
-          </Tooltip>
         </ListItem>
         <Divider />
         <Box
@@ -151,6 +126,9 @@ export default function MenuActionList() {
             </Button>
           </Stack>
         </Box>
+      </Paper>
+      <Paper elevation={2} sx={{ maxWidth: "100%", padding: 1 }}>
+        <Userdata />
       </Paper>
     </Box>
   );

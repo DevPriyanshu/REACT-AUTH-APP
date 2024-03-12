@@ -1,9 +1,6 @@
 import * as React from "react";
-import Paper from "@mui/material/Paper";
-import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import MenuActionList from "./Menu";
-import Userdata from "./UserData";
 
 export default function Home() {
   return (
@@ -14,14 +11,7 @@ export default function Home() {
       justifyContent={"center"}
       p={20}
     >
-      <Paper>
-        <MenuList>
-          <MenuActionList />
-        </MenuList>
-      </Paper>
-      <Paper>
-        <Userdata />
-      </Paper>
+      <MenuActionList />
     </Stack>
   );
 }
