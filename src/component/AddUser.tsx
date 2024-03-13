@@ -1,3 +1,4 @@
+import * as React from "react";
 import Box from "@mui/material/Box";
 import { AccountCircle, Mail } from "@mui/icons-material";
 import Modal from "@mui/material/Modal";
@@ -10,7 +11,6 @@ import { useForm } from "react-hook-form";
 import axiosInstance from "../api/axios-config";
 import { useUserStore } from "../store/user-store";
 import { useSnackbar } from "../context/snackbar-context";
-import { useEffect } from "react";
 import Page from "./Page";
 const style = {
   position: "absolute" as "absolute",
@@ -25,20 +25,19 @@ const style = {
 };
 
 interface IUpdateUserModalProps {
-  user: User | undefined;
   handleOpen: () => void;
   isOpen: boolean;
 }
 
 function UpdateUserModal({
-  user,
   handleOpen,
   isOpen,
 }: Readonly<IUpdateUserModalProps>) {
-  const { updateUser } = useUserStore();
+  const { addUser } = useUserStore();
   const { showSnackbar } = useSnackbar();
+  //   const handleClose = () => setOpen(isOpen);
 
-  useEffect(() => {
+  React.useEffect(() => {
     resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -48,29 +47,29 @@ function UpdateUserModal({
   });
 
   function resetForm() {
-    setValue("email", user?.email ?? "");
-    setValue("firstName", user?.firstName ?? "");
-    setValue("lastName", user?.lastName ?? "");
+    setValue("email", "");
+    setValue("firstName", "");
+    setValue("lastName", "");
   }
 
-  const hitUpdateUserApi = async (data: User) => {
+  const hitAddUserApi = async (data: User) => {
     try {
-      const response = await axiosInstance.put(`users/${user?.id}`, {
+      const response = await axiosInstance.post(`users`, {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
       });
-      updateUser(response.data);
+      addUser(response.data);
       handleOpen();
-      showSnackbar(`User Updated: ${response.data.id}`, "success");
+      showSnackbar(`User Added: ${response.data.id}`, "success");
     } catch (error) {
       console.error("Error fetching data:", error);
-      showSnackbar(`Error while updating the user`, "error");
+      showSnackbar(`Error while adding the user`, "success");
     }
   };
 
   const onSubmit = async (data: User) => {
-    hitUpdateUserApi(data);
+    hitAddUserApi(data);
   };
 
   const {
@@ -79,7 +78,7 @@ function UpdateUserModal({
     formState: { errors, isSubmitting, isValid },
   } = methods;
   return (
-    <Page title="Update User">
+    <Page title="Add User">
       <Modal
         open={isOpen}
         onClose={handleOpen}
@@ -88,7 +87,7 @@ function UpdateUserModal({
       >
         <Box sx={style}>
           <Typography variant="h6" mb={2} align="left" sx={{ marginLeft: 1 }}>
-            Update User data...
+            Add User data..
           </Typography>
           <FormProvider onSubmit={handleSubmit(onSubmit)} methods={methods}>
             <Stack spacing={3}>
@@ -140,7 +139,7 @@ function UpdateUserModal({
                 variant="contained"
                 disabled={!isValid}
               >
-                Update
+                Add User
               </LoadingButton>
             </Stack>
           </FormProvider>

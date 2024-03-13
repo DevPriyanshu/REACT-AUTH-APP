@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
@@ -6,50 +5,99 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowRight from "@mui/icons-material/ArrowRight";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import Home from "@mui/icons-material/Home";
-import Settings from "@mui/icons-material/Settings";
-import { GetApp, Search } from "@mui/icons-material";
+import {
+  Add,
+  AddHomeOutlined,
+  LogoutOutlined,
+  Search,
+} from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import Userdata from "./UserData";
-import Typography from "@mui/material/Typography";
+import { useAuthContext } from "../context/AuthContext";
+import AddUser from "./AddUser";
+import { useState } from "react";
+import { InputBase } from "@mui/material";
+import { User } from "../models/model";
+import { useUserStore } from "../store/user-store";
 
-const data = [
-  { icon: <GetApp />, label: "Get All User(s)" },
-  { icon: <Search />, label: "Search User(s)" },
-];
-
-export default function MenuActionList() {
+function MenuActionList() {
+  const { users } = useUserStore();
+  const { authUser } = useAuthContext();
   const navigate = useNavigate();
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchData, setSearchdata] = useState<User[]>([]);
+
+  const doOrderFilter = (q: string) => {
+    setSearchQuery(q);
+    const byIdFilter = users.filter((o) => o.id === parseInt(q));
+    const filterOrder =
+      byIdFilter.length === 1
+        ? byIdFilter
+        : users.filter((o) => o.firstName?.toLowerCase().includes(q));
+    setSearchdata(filterOrder as User[]);
+  };
+
+  function capitalizeFirstLetter(str: string): string {
+    if (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    } else {
+      return "";
+    }
+  }
   function handleLogOut() {
     localStorage.removeItem("token");
     navigate("/login");
   }
-  const [open, setOpen] = React.useState(true);
+
+  function handleAddUserClick() {
+    setIsAddUserOpen((prevIsOpen) => !prevIsOpen);
+  }
+
+  const [open, setOpen] = useState(true);
+
+  const data = [
+    {
+      label: "",
+      icon: <Search />,
+      component: (
+        <Box sx={{ bgcolor: "rgba(0, 0, 0, 0.1)", borderRadius: 4, p: 1 }}>
+          <InputBase
+            value={searchQuery}
+            onChange={(e) => doOrderFilter(e.target.value.toLowerCase())}
+            placeholder="Search…"
+            inputProps={{ "aria-label": "search" }}
+            sx={{ color: "white", fontSize: 16 }} // Apply white color and adjust font size
+          />
+        </Box>
+      ),
+    },
+    {
+      icon: <Add />,
+      label: "Add new user",
+      onClick: handleAddUserClick,
+    },
+  ];
 
   return (
     <Box
       sx={{
-        border: "1px solid black",
         display: "flex",
         justifyContent: "space-between",
-        maxWidth: "100%",
       }}
     >
-      <Paper elevation={2} sx={{ maxWidth: 200, padding: 1 }}>
+      <Paper elevation={2} sx={{ maxWidth: 200, padding: 0.1 }}>
         <Divider />
         <ListItem component="div" disablePadding>
           <ListItemButton>
             <ListItemIcon>
-              <Home color="primary" />
+              <AddHomeOutlined color="primary" />
             </ListItemIcon>
             <ListItemText
-              primary="React App"
+              primary={"React App"}
               primaryTypographyProps={{
                 color: "primary",
                 fontWeight: "medium",
@@ -58,7 +106,7 @@ export default function MenuActionList() {
             />
           </ListItemButton>
         </ListItem>
-        <Divider />
+
         <Box
           sx={{
             bgcolor: "black",
@@ -84,7 +132,7 @@ export default function MenuActionList() {
                 lineHeight: "20px",
                 mb: "2px",
               }}
-              secondary="Authentication, Firestore Database, Realtime Database, Storage, Hosting, Functions, and Machine Learning"
+              secondary={data.map((d) => d.label)}
               secondaryTypographyProps={{
                 noWrap: true,
                 fontSize: 12,
@@ -106,7 +154,8 @@ export default function MenuActionList() {
             data.map((item) => (
               <ListItemButton
                 key={item.label}
-                sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
+                sx={{ py: 0, height: 50, color: "rgba(255,255,255,.8)" }}
+                onClick={item.onClick}
               >
                 <ListItemIcon sx={{ color: "inherit" }}>
                   {item.icon}
@@ -118,18 +167,30 @@ export default function MenuActionList() {
                     fontWeight: "medium",
                   }}
                 />
+                {item.component}
               </ListItemButton>
             ))}
+          {isAddUserOpen && (
+            <AddUser isOpen={isAddUserOpen} handleOpen={handleAddUserClick} />
+          )}
+
           <Stack p={2}>
-            <Button onClick={handleLogOut} color="primary" variant="contained">
-              LogOut
+            <Button
+              onClick={handleLogOut}
+              color="primary"
+              variant="contained"
+              startIcon={<LogoutOutlined />}
+            >
+              Log Out
             </Button>
           </Stack>
         </Box>
       </Paper>
-      <Paper elevation={2} sx={{ maxWidth: "100%", padding: 1 }}>
-        <Userdata />
+      <Paper elevation={2} sx={{ maxWidth: "100%", padding: 1, marginLeft: 1 }}>
+        <Userdata users={searchData.length === 0 ? users : searchData} />
       </Paper>
     </Box>
   );
 }
+
+export default MenuActionList;

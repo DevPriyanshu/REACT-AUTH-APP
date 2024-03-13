@@ -10,7 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import { JwtRequest } from "../models/model";
 import axiosInstance from "../api/axios-config";
-export default function Login() {
+import Page from "./Page";
+
+function Login() {
   const { showSnackbar } = useSnackbar();
   const { setAuthData } = useAuthContext();
   const navigate = useNavigate();
@@ -40,12 +42,13 @@ export default function Login() {
           password: data.password,
         }
       );
-      setAuthData(response.data);
+      
+      setAuthData(response.data.token);
       localStorage.setItem("token", response.data.token);
       navigate("/home");
       showSnackbar("Login Success", "success");
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    } catch (error: any) {
+      showSnackbar(`Login Failed : ${error.response.data.message}`, "error");
     }
   };
   
@@ -54,6 +57,7 @@ export default function Login() {
   };
 
   return (
+    <Page title="Login">
     <Box justifyContent={"center"} display={"flex"} m={30}>
       <FormProvider onSubmit={handleSubmit(onSubmit)} methods={methods}>
         <Stack spacing={3}>
@@ -96,5 +100,8 @@ export default function Login() {
         </Stack>
       </FormProvider>
     </Box>
+    </Page>
   );
 }
+
+export default Login;
