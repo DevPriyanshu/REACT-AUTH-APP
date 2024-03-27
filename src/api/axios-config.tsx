@@ -26,8 +26,10 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (res) => {
-    if (res.status === 200) {
+    if (res.status >= 200 && res.status < 300) {
       return res;
+    } else if (res.status === 204) {
+      return res; 
     } else {
       throw new Error("Request failed with status: " + res.status);
     }

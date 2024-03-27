@@ -64,7 +64,7 @@ function UpdateUserModal({
       showSnackbar(`User Added: ${response.data.id}`, "success");
     } catch (error) {
       console.error("Error fetching data:", error);
-      showSnackbar(`Error while adding the user`, "success");
+      showSnackbar(`Error while adding the user`, "error");
     }
   };
 

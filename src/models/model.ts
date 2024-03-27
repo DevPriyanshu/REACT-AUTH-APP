@@ -14,54 +14,14 @@ export interface JwtRequest {
 }
 
 export interface User {
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  createdAt?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  createdBy?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  email?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  firstName?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof User
-   */
   id?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
+  firstName?: string;
   lastName?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  updatedAt?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof User
-   */
-  updatedBy?: string;
+  email?: string;
+  createdAt?: Date;
+  createdBy?: string;
+  updatedAt?: Date;
+  updatedBy?: string;  
 }
 
 export interface AuthUser {

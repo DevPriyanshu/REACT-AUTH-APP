@@ -33,7 +33,7 @@ export default function Userdata({ users }: Readonly<IUserdataProps>) {
       headerName: "Updated At",
       width: 150,
       valueFormatter: (params) =>
-        format(new Date(params.value), "MM/YYY hh:mm a"),
+        format(new Date(params.value), "E d/MM hh:mm a"),
     },
     {
       field: "createdBy",
@@ -69,13 +69,11 @@ export default function Userdata({ users }: Readonly<IUserdataProps>) {
 
   const hitDelteUserApi = async (userId: number) => {
     try {
-      const response = await axiosInstance.delete(`/user/${userId}`);
+      await axiosInstance.delete(`/user/${userId}`);
       deleteUser(userId);
-      console.log({ response });
       showSnackbar(`User Deleted: ${userId}`, "success");
     } catch (error) {
-     
-      showSnackbar("Error while fetching user(s)", "error");
+      showSnackbar("Error while deleting user", "error");
     }
   };
 

@@ -10,11 +10,10 @@ interface IUserStore {
 }
 
 const useUserStore = create<IUserStore>((set) => ({
-
   async initUsers() {
     try {
       const response = await createAxiosInstance.get("users");
-      set({ users: response.data }); 
+      set({ users: response.data });
     } catch (error) {
       console.log("Error while fetching user's ", "error");
     }

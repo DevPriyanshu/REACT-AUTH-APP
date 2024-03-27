@@ -43,8 +43,8 @@ function Login() {
         }
       );
       
-      setAuthData(response.data.token);
-      localStorage.setItem("token", response.data.token);
+      setAuthData(response.data.jwttoken);
+      localStorage.setItem("token", response.data.jwttoken);
       navigate("/home");
       showSnackbar("Login Success", "success");
     } catch (error: any) {
