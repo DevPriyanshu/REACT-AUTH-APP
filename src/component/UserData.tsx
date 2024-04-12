@@ -41,6 +41,17 @@ export default function Userdata({ users }: Readonly<IUserdataProps>) {
       width: 130,
     },
     {
+      field: "roles",
+      headerName: "Access type",
+      width: 150,
+      valueGetter: (params) => {
+        const roles = params.row.roles.map((role: { roleType: string }) =>
+          role.roleType.replace("ROLE_", "")
+        );
+        return roles.join(", ");
+      },
+    },
+    {
       field: "action",
       headerName: "Action",
       width: 100,
@@ -63,6 +74,7 @@ export default function Userdata({ users }: Readonly<IUserdataProps>) {
     },
   ];
 
+  console.log({ users });
   function handleUpdateUserClick() {
     setIsUpdateUserOpen((prevIsOpen) => !prevIsOpen);
   }
@@ -72,8 +84,13 @@ export default function Userdata({ users }: Readonly<IUserdataProps>) {
       await axiosInstance.delete(`/user/${userId}`);
       deleteUser(userId);
       showSnackbar(`User Deleted: ${userId}`, "success");
-    } catch (error) {
-      showSnackbar("Error while deleting user", "error");
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        showSnackbar(`${error.response.data.message}`, "error");
+      } else {
+        showSnackbar(`${error}`, "error");
+      }
     }
   };
 

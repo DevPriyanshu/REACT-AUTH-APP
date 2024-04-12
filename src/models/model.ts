@@ -17,13 +17,19 @@ export interface User {
   id?: number;
   firstName?: string;
   lastName?: string;
+  username?:string;
+  password?: string;
   email?: string;
   createdAt?: Date;
   createdBy?: string;
   updatedAt?: Date;
-  updatedBy?: string;  
+  updatedBy?: string;
+  roles: UserRole[];
 }
-
+type UserRole = {
+  id: number;
+  roleType: string; // Assuming roleType is a string representing the role type
+};
 export interface AuthUser {
   /**
    *
@@ -43,4 +49,5 @@ export interface AuthUser {
    * @memberof AuthUser
    */
   iat?: string;
+  roles?: string;
 }

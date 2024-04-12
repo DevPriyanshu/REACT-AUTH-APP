@@ -20,7 +20,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuthUser(data);
   };
 
-  function initAuthUser(token : string) {
+  function initAuthUser(token: string) {
     const jwtToken = localStorage.getItem("token");
     if (jwtToken || token) {
       const decodedToken = jwtDecode(

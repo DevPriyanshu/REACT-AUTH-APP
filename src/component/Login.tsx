@@ -35,14 +35,11 @@ function Login() {
 
   const hitLoginApi = async (data: JwtRequest) => {
     try {
-      const response = await axiosInstance.post(
-        "authenticate",
-        {
-          username: data.username,
-          password: data.password,
-        }
-      );
-      
+      const response = await axiosInstance.post("authenticate", {
+        username: data.username,
+        password: data.password,
+      });
+
       setAuthData(response.data.jwttoken);
       localStorage.setItem("token", response.data.jwttoken);
       navigate("/home");
@@ -51,57 +48,57 @@ function Login() {
       showSnackbar(`Login Failed : ${error.response.data.message}`, "error");
     }
   };
-  
+
   const onSubmit = async (data: JwtRequest) => {
     hitLoginApi(data);
   };
 
   return (
     <Page title="Login">
-    <Box justifyContent={"center"} display={"flex"} m={30}>
-      <FormProvider onSubmit={handleSubmit(onSubmit)} methods={methods}>
-        <Stack spacing={3}>
-          <RHFTextField
-            name="username"
-            placeholder="Username"
-            variant="outlined"
-            error={!!errors.username}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AccountCircle fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <RHFTextField
-            type="password"
-            name="password"
-            placeholder="Password"
-            variant="outlined"
-            error={!!errors.password}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PasswordOutlined fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          />
+      <Box justifyContent={"center"} display={"flex"} m={30}>
+        <FormProvider onSubmit={handleSubmit(onSubmit)} methods={methods}>
+          <Stack spacing={3}>
+            <RHFTextField
+              name="username"
+              placeholder="Username"
+              variant="outlined"
+              error={!!errors.username}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircle fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <RHFTextField
+              type="password"
+              name="password"
+              placeholder="Password"
+              variant="outlined"
+              error={!!errors.password}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PasswordOutlined fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <LoadingButton
-            type="submit"
-            loading={isSubmitting}
-            variant="contained"
-            disabled={!isValid}
-          >
-            Login
-          </LoadingButton>
-        </Stack>
-      </FormProvider>
-    </Box>
+            <LoadingButton
+              type="submit"
+              loading={isSubmitting}
+              variant="contained"
+              disabled={!isValid}
+            >
+              Login
+            </LoadingButton>
+          </Stack>
+        </FormProvider>
+      </Box>
     </Page>
   );
 }
-
+// Login. = "Login";
 export default Login;

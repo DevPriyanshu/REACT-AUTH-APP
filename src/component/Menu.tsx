@@ -31,6 +31,7 @@ function MenuActionList() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchData, setSearchdata] = useState<User[]>([]);
 
+  console.log({ authUser });
   const doOrderFilter = (q: string) => {
     setSearchQuery(q);
     const byIdFilter = users.filter((o) => o.id === parseInt(q));
@@ -41,13 +42,6 @@ function MenuActionList() {
     setSearchdata(filterOrder as User[]);
   };
 
-  function capitalizeFirstLetter(str: string): string {
-    if (str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    } else {
-      return "";
-    }
-  }
   function handleLogOut() {
     localStorage.removeItem("token");
     navigate("/login");
@@ -70,7 +64,7 @@ function MenuActionList() {
             onChange={(e) => doOrderFilter(e.target.value.toLowerCase())}
             placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
-            sx={{ color: "white", fontSize: 16 }} // Apply white color and adjust font size
+            sx={{ color: "white", fontSize: 16 }}
           />
         </Box>
       ),
@@ -97,7 +91,7 @@ function MenuActionList() {
               <AddHomeOutlined color="primary" />
             </ListItemIcon>
             <ListItemText
-              primary={"React App"}
+              primary={authUser?.sub}
               primaryTypographyProps={{
                 color: "primary",
                 fontWeight: "medium",
@@ -115,7 +109,7 @@ function MenuActionList() {
         >
           <ListItemButton
             alignItems="flex-start"
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpen(true)}
             sx={{
               px: 3,
               pt: 2.5,
@@ -124,31 +118,32 @@ function MenuActionList() {
             }}
           >
             <ListItemText
-              primary="Action"
-              primaryTypographyProps={{
-                fontSize: 15,
-                color: "white",
-                fontWeight: "medium",
-                lineHeight: "20px",
-                mb: "2px",
-              }}
-              secondary={data.map((d) => d.label)}
-              secondaryTypographyProps={{
-                noWrap: true,
-                fontSize: 12,
-                lineHeight: "16px",
-                color: open ? "rgba(0,0,0,0)" : "rgba(255,255,255,0.5)",
-              }}
+              primary={
+                <Paper
+                  sx={{
+                    fontSize: 15,
+                    color: "green",
+                    fontWeight: "medium",
+                    lineHeight: "20px",
+                    marginBottom: "2px",
+                    border: "1px solid green",
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  {authUser?.roles?.replace("ROLE_", "")}
+                </Paper>
+              }
               sx={{ my: 0 }}
             />
-            <KeyboardArrowDown
+            {/* <KeyboardArrowDown
               sx={{
                 mr: -1,
                 opacity: 0,
                 transform: open ? "rotate(-180deg)" : "rotate(0)",
                 transition: "0.2s",
               }}
-            />
+            /> */}
           </ListItemButton>
           {open &&
             data.map((item) => (
